@@ -10,31 +10,43 @@ export default function TokenBalanceCheckerPage() {
   const { loading, error, balanceData, fetchBalance } = useTokenBalance();
 
   return (
-    <main className="min-h-screen bg-background py-12">
-      <div className="max-w-2xl mx-auto px-4 space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight mb-2">
-            Token Balance Checker
-          </h1>
-          <p className="text-muted-foreground">
-            Check ERC20 token balances for any Ethereum wallet
-          </p>
+    <div className="relative min-h-screen w-full">
+      <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]"></div>
+
+      <main className="relative z-10 flex min-h-screen items-center justify-center">
+        <div className="w-full max-w-2xl px-4 py-8">
+          <div className="text-center">
+            <h1 className="text-3xl font-bold tracking-tight mb-2">
+              Token Balance Checker
+            </h1>
+            <p className="text-muted-foreground">
+              Check ERC20 token balances for any Ethereum wallet
+            </p>
+          </div>
+
+          <div className="mt-8">
+            <TokenBalanceForm onSubmit={fetchBalance} loading={loading} />
+
+            {error && (
+              <Alert variant="destructive" className="mt-4">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {loading ? (
+              <div className="mt-4">
+                <LoadingSkeleton />
+              </div>
+            ) : (
+              balanceData && (
+                <div className="mt-4">
+                  <BalanceDisplay data={balanceData} />
+                </div>
+              )
+            )}
+          </div>
         </div>
-
-        <TokenBalanceForm onSubmit={fetchBalance} loading={loading} />
-
-        {error && (
-          <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        {loading ? (
-          <LoadingSkeleton />
-        ) : (
-          balanceData && <BalanceDisplay data={balanceData} />
-        )}
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }

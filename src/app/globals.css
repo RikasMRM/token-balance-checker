@@ -17,5 +17,53 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Onest", sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .title {
+    @apply mb-[24px] text-[20px] font-semibold text-gray-100;
+    @apply lg:mb-[28px] lg:text-[28px];
+  }
+  .text-page {
+    @apply rounded-[12px] border border-white/[12%] bg-[linear-gradient(171deg,_#192145_52%,_#200e16_100%)] p-[20px] lg:bg-[linear-gradient(135deg,_#192145_36%,_#200e16_100%)];
+    @apply lg:rounded-[16px] lg:px-[32px] lg:py-[40px];
+
+    @apply [&>div]:space-y-[26px];
+    @apply [&>div]:lg:space-y-[30px];
+
+    @apply [&>hr]:my-[40px] [&>hr]:bg-white [&>hr]:opacity-10;
+    @apply [&>hr]:lg:my-[47px];
+
+    @apply [&>div>h2]:text-18 [&>div>h2]:font-semibold [&>div>h2]:text-grey-200;
+    @apply [&>div>h2]:lg:text-[24px];
+
+    @apply [&>div>h2~.heading-3]:!mt-[18px] [&>div>h3]:text-16 [&>div>h3]:font-semibold [&>div>h3]:text-grey-200;
+    @apply [&>div>h3]:lg:text-18;
+
+    @apply [&>div>.heading-3_+_p]:!mt-[4px] [&>div>h3_+_p]:!mt-[4px] [&>div>p>span]:font-semibold [&>div>p>span]:text-grey-100 [&>div>p]:text-14 [&>div>p]:leading-[24px] [&>div>p]:text-grey-350;
+    @apply [&>div>.heading-3_+_p]:lg:!mt-[8px] [&>div>h3_+_p]:!mt-[8px] [&>div>p]:lg:text-16 [&>div>p]:lg:leading-[28px];
+
+    @apply [&>div>ul>li]:text-14 [&>div>ul>li]:leading-[24px] [&>div>ul>li]:text-grey-350 [&>div>ul]:list-disc [&>div>ul]:pl-[16px];
+    @apply [&>div>ul>li]:lg:text-16 [&>div>ul>li]:lg:leading-[28px];
+
+    @apply [&>div>.type-1>li]:!mt-[4px] [&>div>.type-1]:!mt-[4px] [&>div>ol>li>span]:font-semibold [&>div>ol>li>span]:text-grey-100 [&>div>ol>li]:text-14 [&>div>ol>li]:leading-[24px] [&>div>ol>li]:text-grey-350 [&>div>ol]:list-decimal [&>div>ol]:space-y-[26px] [&>div>ol]:pl-[16px];
+    @apply [&>div>.type-1>li]:lg:!mt-[8px] [&>div>.type-1]:lg:!mt-[8px] [&>div>ol>li]:lg:text-16 [&>div>ol>li]:lg:leading-[28px] [&>div>ol]:lg:space-y-[30px];
+  }
+}
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+@layer components {
+  .container-1240 {
+    max-width: 1240px !important;
+    width: 100%;
+  }
 }
