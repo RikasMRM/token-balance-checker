@@ -1,101 +1,197 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+
+interface Token {
+  symbol: string;
+  name: string;
+  address: string;
+}
+
+const COMMON_TOKENS: Token[] = [
+  {
+    symbol: "USDT",
+    name: "Tether USD",
+    address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  },
+  {
+    symbol: "USDC",
+    name: "USD Coin",
+    address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+  },
+  {
+    symbol: "BNB",
+    name: "Binance Coin",
+    address: "0xB8c77482e45F1F44dE1745F52C74426C631bDD52",
+  },
+];
+
+interface TokenBalanceData {
+  balance: string;
+  symbol: string;
+  walletAddress: string;
+  tokenAddress: string;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [walletAddress, setWalletAddress] = useState("");
+  const [selectedToken, setSelectedToken] = useState<string>("");
+  const [customTokenAddress, setCustomTokenAddress] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [balanceData, setBalanceData] = useState<TokenBalanceData | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const fetchBalance = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const tokenAddress =
+        selectedToken === "custom" ? customTokenAddress : selectedToken;
+      const response = await fetch(
+        `/api/token/balance?walletAddress=${walletAddress}&tokenAddress=${tokenAddress}`
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch balance");
+      }
+
+      if (data.success && data.data) {
+        setBalanceData(data.data);
+      } else {
+        throw new Error("Invalid response format");
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-2xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Token Balance Checker
+          </h1>
+          <p className="text-gray-600">
+            Check ERC20 token balances for any Ethereum wallet
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+          <div className="space-y-6">
+            <div>
+              <label
+                htmlFor="wallet"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Wallet Address
+              </label>
+              <input
+                id="wallet"
+                type="text"
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
+                placeholder="0x..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="token"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Select Token
+              </label>
+              <select
+                id="token"
+                value={selectedToken}
+                onChange={(e) => setSelectedToken(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Choose a token</option>
+                {COMMON_TOKENS.map((token) => (
+                  <option key={token.address} value={token.address}>
+                    {token.symbol} - {token.name}
+                  </option>
+                ))}
+                <option value="custom">Custom Token</option>
+              </select>
+            </div>
+
+            {selectedToken === "custom" && (
+              <div>
+                <label
+                  htmlFor="custom-token"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Custom Token Address
+                </label>
+                <input
+                  id="custom-token"
+                  type="text"
+                  value={customTokenAddress}
+                  onChange={(e) => setCustomTokenAddress(e.target.value)}
+                  placeholder="0x..."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            )}
+
+            <button
+              onClick={fetchBalance}
+              disabled={
+                loading ||
+                !walletAddress ||
+                !selectedToken ||
+                (selectedToken === "custom" && !customTokenAddress)
+              }
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? "Checking..." : "Check Balance"}
+            </button>
+          </div>
+        </div>
+
+        {error && (
+          <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600">{error}</p>
+          </div>
+        )}
+
+        {balanceData && (
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+              Balance Details
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Token Balance</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {parseFloat(balanceData.balance).toLocaleString()}{" "}
+                  {balanceData.symbol}
+                </p>
+              </div>
+              <div className="pt-4 border-t border-gray-200">
+                <p className="text-sm text-gray-600 mb-1">Wallet Address</p>
+                <p className="font-mono text-sm break-all">
+                  {balanceData.walletAddress}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600 mb-1">Token Contract</p>
+                <p className="font-mono text-sm break-all">
+                  {balanceData.tokenAddress}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
