@@ -2,7 +2,7 @@
 
 A modern web application to check ERC20 token balances on the Ethereum network. Built with Next.js, TypeScript, shadcn/ui, and ethers.js.
 
-![Token Balance Checker](https://screenshot-url.png)
+![Token Balance Checker](./screenshot-url.png)
 
 ## Features
 
